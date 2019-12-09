@@ -8,6 +8,7 @@ import tensorflow_hub as hub
 
 from tensorflow import keras
 from bert import optimization
+from bert import run_classifier
 from bert import tokenization
 
 def load_dataset(csv_file):
@@ -43,12 +44,11 @@ def create_tokenizer_from_hub_module(bert_model_hub):
 		vocab_file=vocab_file, do_lower_case=do_lower_case)
 
 
-
-def create_model(is_predicting, input_ids, input_mask, segment_ids, labels,
+def create_model(bert_model_hub, is_predicting, input_ids, input_mask, segment_ids, labels,
 				 num_labels):
 	"""Creates a classification model."""
 
-	bert_module = hub.Module(BERT_MODEL_HUB, trainable=True)
+	bert_module = hub.Module(bert_model_hub, trainable=True)
 	bert_inputs = dict(
 		input_ids=input_ids,
 		input_mask=input_mask,
@@ -95,7 +95,7 @@ def create_model(is_predicting, input_ids, input_mask, segment_ids, labels,
 		return (loss, predicted_labels, log_probs)
 
 
-def model_fn_builder(num_labels, learning_rate, num_train_steps,
+def model_fn_builder(bert_model_hub, num_labels, learning_rate, num_train_steps,
 					 num_warmup_steps):
 	"""Returns `model_fn` closure for TPUEstimator."""
 	def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
@@ -111,11 +111,13 @@ def model_fn_builder(num_labels, learning_rate, num_train_steps,
 		# TRAIN and EVAL
 		if not is_predicting:
 
-			(loss, predicted_labels, log_probs) = create_model(
-			is_predicting, input_ids, input_mask, segment_ids, label_ids, num_labels)
+			(loss, predicted_labels, log_probs) = create_model(bert_model_hub,
+				is_predicting, input_ids, input_mask, segment_ids,
+				label_ids, num_labels)
 
 			train_op = optimization.create_optimizer(
-				loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu=False)
+				loss, learning_rate, num_train_steps, num_warmup_steps,
+				use_tpu=False)
 
 			# Calculate evaluation metrics. 
 			def metric_fn(label_ids, predicted_labels):
@@ -165,8 +167,9 @@ def model_fn_builder(num_labels, learning_rate, num_train_steps,
 				return tf.estimator.EstimatorSpec(
 					mode=mode, loss=loss, eval_metric_ops=eval_metrics)
 		else:
-			(predicted_labels, log_probs) = create_model(
-				is_predicting, input_ids, input_mask, segment_ids, label_ids, num_labels)
+			(predicted_labels, log_probs) = create_model(bert_model_hub,
+				is_predicting, input_ids, input_mask, segment_ids,
+				label_ids, num_labels)
 
 			predictions = {
 				'probabilities': log_probs,
@@ -174,14 +177,19 @@ def model_fn_builder(num_labels, learning_rate, num_train_steps,
 			}
 			return tf.estimator.EstimatorSpec(mode, predictions=predictions)
 
-	# Return the actual model function in the closure
 	return model_fn
 
 
-def getPrediction(estimator, in_sentences, labels, max_seq_len, tokenizer):
-	label_list = list(range(len(labels)))
-	input_examples = [run_classifier.InputExample(guid="", text_a = x, text_b = None, label = 0) for x in in_sentences] # here, "" is just a dummy label
-	input_features = run_classifier.convert_examples_to_features(input_examples, label_list, max_seq_len, tokenizer)
-	predict_input_fn = run_classifier.input_fn_builder(features=input_features, seq_length=max_seq_len, is_training=False, drop_remainder=False)
+def getPrediction(estimator, in_sentences, labels, label_list, max_seq_len,
+				  tokenizer):
+	input_examples = [run_classifier.InputExample(
+		guid="", text_a = x, text_b = None, label = 0) for x in in_sentences]
+	input_features = run_classifier.convert_examples_to_features(
+		input_examples, label_list, max_seq_len, tokenizer)
+	predict_input_fn = run_classifier.input_fn_builder(
+		features=input_features, seq_length=max_seq_len, is_training=False,
+		drop_remainder=False)
 	predictions = estimator.predict(predict_input_fn)
-	return [(sentence, prediction['probabilities'], labels[prediction['labels']]) for sentence, prediction in zip(in_sentences, predictions)]
+	return [(sentence, prediction['probabilities'],
+			 labels[prediction['labels']])
+			for sentence, prediction in zip(in_sentences, predictions)]
