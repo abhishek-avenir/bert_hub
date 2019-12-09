@@ -4,7 +4,6 @@ import os
 import pandas as pd
 import re
 import tensorflow as tf
-import tensorflow_hub as hub
 
 from tensorflow import keras
 from bert import modeling
@@ -115,7 +114,6 @@ def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
             (assignment_map, initialized_variable_names) = \
                 modeling.get_assignment_map_from_checkpoint(
                     tvars, init_checkpoint)
-            print(f"init_checkpoint: {init_checkpoint} =========")
             tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
 
         # TRAIN and EVAL

@@ -16,12 +16,12 @@ LABELS = ['pos', 'neg']
 DATA_COLUMN = "sentence"
 LABEL_COLUMN = "label"
 
-OUTPUT_DIR = "output_dir2/"
+OUTPUT_DIR = "output_dir/"
 
 VOCAB_FILE = "BERT_BASE_DIR/vocab.txt"
 BERT_CONFIG = "BERT_BASE_DIR/bert_config.json"
-# INIT_CHECKPOINT = "BERT_BASE_DIR/bert_model.ckpt"
-INIT_CHECKPOINT = "output_dir/model.ckpt-468"
+INIT_CHECKPOINT = "BERT_BASE_DIR/bert_model.ckpt"
+# INIT_CHECKPOINT = "output_dir/model.ckpt-468"
 
 MAX_SEQ_LENGTH = 128
 BATCH_SIZE = 32
@@ -173,8 +173,8 @@ def main(mode, skip_eval=False, predict_file=None, text=None):
 if __name__ == "__main__":
 	parser = ArgumentParser()
 	group = parser.add_mutually_exclusive_group(required=True)
-	group.add_argument("--do-train", action='store_true')
-	group.add_argument("--do-predict", action='store_true')
+	group.add_argument("--train", action='store_true')
+	group.add_argument("--predict", action='store_true')
 	group2 = parser.add_mutually_exclusive_group()
 	group2.add_argument(
 		"--predict-file",
@@ -183,11 +183,11 @@ if __name__ == "__main__":
 	group2.add_argument("--skip-eval", action='store_true')
 	args = parser.parse_args()
 
-	if (args.skip_eval and args.do_predict) or (
-			((args.predict_file or args.text) and args.do_train)):
+	if (args.skip_eval and args.predict) or (
+			((args.predict_file or args.text) and args.train)):
 		raise Exception("Invalid arguments combinations..!")
 
-	if args.do_train:
+	if args.train:
 		main(mode='train', skip_eval=args.skip_eval)
-	elif args.do_predict:
+	elif args.predict:
 		main(mode='predict', predict_file=args.predict_file, text=args.text)
