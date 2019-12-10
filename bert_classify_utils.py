@@ -49,9 +49,6 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
         token_type_ids=segment_ids,
         use_one_hot_embeddings=False)
 
-    # In the demo, we are doing a simple classification task on the entire
-    # segment.
-    #
     # If you want to use the token-level output, use model.get_sequence_output()
     # instead.
     output_layer = model.get_pooled_output()
@@ -108,10 +105,8 @@ def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
         is_training = not is_predicting
 
         tvars = tf.trainable_variables()
-        initialized_variable_names = {}
-        scaffold_fn = None
         if init_checkpoint:
-            (assignment_map, initialized_variable_names) = \
+            (assignment_map, _) = \
                 modeling.get_assignment_map_from_checkpoint(
                     tvars, init_checkpoint)
             tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
