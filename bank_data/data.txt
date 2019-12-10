@@ -1,0 +1,70 @@
+
+[LABEL] Account balance
+Help me with the account details
+
+Alternatives: Account summary, balance for all accounts, acc sum, acc summary, account sum, short statement, summary of accounts, summary of balances, account overview, account balance, How much money do I have, account balance, Balance, Balance for account [name], what funds do I have available, money available, how much can I spend, what’s left in my account, what do I have left today
+
+Prefixes to above: I want to see, I want to find, what’s my, what is my, get, please get, tell me my, show me, display, what’s my, please get, get
+
+
+[LABEL] Transaction history
+Please help me with the transaction history
+
+Alternatives: Transaction history, Last [number] transactions, History of account, account transactions, acc trx, acc Trans, Account trx, recent transactions, transaction summary,  why do I have so few money
+
+Prefixes to above: I want to see my, what are my, what were the 
+
+
+[LABEL] Add Payee
+I want to add a new payee
+
+Alternatives: Add beneficiary, new beneficiary, create beneficiary, add payee, add new payee, create new payee, pay someone new, 
+
+Prefixes to above: I want to, I need to, help me to, can I, Add a, create a, set up a, setup a
+
+
+[LABEL] Delete Payee
+I want to delete a person
+
+Alternatives: Remove Beneficiary, delete Beneficiary, erase Beneficiary, Remove payee, delete payee, erase payee
+
+Prefixes to above: I want to, I need to, help me to, can I,
+
+
+[LABEL] Bill Payment
+I want to pay a bill
+
+Alternatives: Pay bill, bill payment, pay [name], pay a bill, pay my [name] bill, bill
+
+Prefixes to above: I want to, help me to, can I, can you, I need to
+
+[LABEL] Transfer own Account
+Transfer between my accounts
+
+Alternatives: Transfer between my accounts, transfer from my [account] to my [account], move funds between my accounts, move money between my accounts, move from __ to __, transfer, make a transfer, move money, move my money, transfer funds, funds transfer, money transfer, transfer [amount] from my [account] to my [account], move some money, move cash  
+
+Prefixes to above: I want to, I need to, help me to, request, can I, I’d like to
+
+[LABEL] Transfer to 3rd party
+Transfer to third party
+
+Alternatives: Transfer to payee, transfer money to payee, transfer funds to payee, transfer to another person, transfer money to another person, transfer funds to another person, send money to payee, send funds to another person, send money, send funds, funds transfer, make a payment to [name], pay [name], send money to [name], pay someone else, transfer funds, send a bank transfer, create a bank transfer 
+
+Prefixes to above: make, request, I want to, I need to, help me to, assist me with, can I, I’d like to
+
+
+[LABEL] Req to call back
+Call me
+
+Alternatives: Call me back, call me, contact me, get in touch with me, phone me, give me a call, call back callback
+
+Prefixes to above: I want to, ask the bank to, I want the bank to, ask a bank clerk to, I need to, can I get a, can someone, can I, can you
+
+
+[LABEL] Req for Human Agent
+I want to be transferred to a person from the bank
+
+Alternatives: Speak with an agent, talk to an agent, transfer to an agent, transfer me to an agent, talk to someone now, I need help now, talk to a person, talk to a real person, talk to a human
+
+Prefixes to above: I want to, I need to, I have to, I request to, can I, put me through
+

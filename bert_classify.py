@@ -41,7 +41,7 @@ def get_estimator(num_train_steps=None, num_warmup_steps=None,
         save_checkpoints_steps=SAVE_CHECKPOINTS_STEPS)
 
     model_fn = model_fn_builder(
-        bert_config_file=BERT_CONFIG,
+        bert_config=modeling.BertConfig.from_json_file(BERT_CONFIG),
         init_checkpoint=checkpoint,
         num_labels=len(LABELS),
         learning_rate=LEARNING_RATE,
@@ -55,7 +55,7 @@ def get_estimator(num_train_steps=None, num_warmup_steps=None,
 
 
 def evaluate(tokenizer, estimator):
-    print("[INFO] Loading data from folders...")
+    print("[INFO] Loading data from test folder...")
     test = load_from_folder(
         TEST_FOLDER, labels=LABELS, data_column=DATA_COLUMN,
         label_column=LABEL_COLUMN)
@@ -91,10 +91,10 @@ def evaluate(tokenizer, estimator):
 
 
 def train(tokenizer, do_eval=True, init_checkpoint=INIT_CHECKPOINT):
-    print("[INFO] Loading data from folders...")
+    print("[INFO] Loading train data from folder...")
     train = load_from_folder(TRAIN_FOLDER, labels=LABELS,
         data_column=DATA_COLUMN, label_column=LABEL_COLUMN)
-    print("[INFO] Done loading data...\n")
+    print("[INFO] Done loading train data...\n")
 
     train = train.sample(5000)
 
@@ -134,6 +134,21 @@ def train(tokenizer, do_eval=True, init_checkpoint=INIT_CHECKPOINT):
 
     if do_eval:
         evaluate(tokenizer, estimator)
+
+    def getPrediction(in_sentences):
+        labels = ["Negative", "Positive"]
+        input_examples = [run_classifier.InputExample(guid="", text_a = x, text_b = None, label = 0) for x in in_sentences] # here, "" is just a dummy label
+        input_features = run_classifier.convert_examples_to_features(input_examples, label_list, MAX_SEQ_LENGTH, tokenizer)
+        predict_input_fn = run_classifier.input_fn_builder(features=input_features, seq_length=MAX_SEQ_LENGTH, is_training=False, drop_remainder=False)
+        predictions = estimator.predict(predict_input_fn)
+        return [(sentence, prediction['probabilities'], labels[prediction['labels']]) for sentence, prediction in zip(in_sentences, predictions)]
+    pred_sentences = [
+      "That movie was absolutely awful",
+      "The acting was a bit lacking",
+      "The film was creative and surprising",
+      "Absolutely fantastic!"]
+    predictions = getPrediction(pred_sentences)
+    print(predictions)
 
 
 def predict(tokenizer, checkpoint, predict_file=None, text=None):
@@ -177,7 +192,7 @@ if __name__ == "__main__":
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--train", action='store_true')
     group.add_argument("--predict", action='store_true')
-    parser.add_argument("--init-checkpoint", help="Path to the checkpoint")
+    parser.add_argument("--checkpoint", help="Path to the checkpoint")
     group2 = parser.add_mutually_exclusive_group()
     group2.add_argument(
         "--predict-file",
@@ -192,7 +207,12 @@ if __name__ == "__main__":
 
     if args.train:
         main(mode='train', skip_eval=args.skip_eval,
-             checkpoint=args.init_checkpoint)
+             checkpoint=args.checkpoint)
     elif args.predict:
+        if not args.checkpoint:
+            raise Exception("`--checkpoint` is required for `--predict`")
+        if not(args.predict_file or args.text):
+            raise Exception("Either of `--predict-file` or `--text` "
+                            "should be specified along with `--predict`")
         main(mode='predict', predict_file=args.predict_file, text=args.text,
-             checkpoint=args.init_checkpoint)
+             checkpoint=args.checkpoint)

@@ -80,7 +80,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
             tf.argmax(log_probs, axis=-1, output_type=tf.int32))
         # If we're predicting, we want predicted labels and the probabiltiies.
         if not is_training:
-          return (predicted_labels, log_probs)
+          return (None, predicted_labels, log_probs)
 
         # If we're train/eval, compute loss between predicted and actual label
         per_example_loss = -tf.reduce_sum(one_hot_labels * log_probs, axis=-1)
@@ -88,10 +88,8 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
         return (loss, predicted_labels, log_probs)
 
 
-def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
+def model_fn_builder(bert_config, init_checkpoint, num_labels,
                      learning_rate, num_train_steps, num_warmup_steps):
-
-    bert_config = modeling.BertConfig.from_json_file(bert_config_file)
 
     def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
         """The `model_fn` for TPUEstimator."""
@@ -104,6 +102,10 @@ def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
         is_predicting = (mode == tf.estimator.ModeKeys.PREDICT)
         is_training = not is_predicting
 
+        (loss, predicted_labels, log_probs) = create_model(bert_config,
+            is_training, input_ids, input_mask, segment_ids,
+            label_ids, num_labels)
+
         tvars = tf.trainable_variables()
         if init_checkpoint:
             (assignment_map, _) = \
@@ -113,10 +115,6 @@ def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
 
         # TRAIN and EVAL
         if not is_predicting:
-
-            (loss, predicted_labels, log_probs) = create_model(bert_config,
-                is_training, input_ids, input_mask, segment_ids,
-                label_ids, num_labels)
 
             train_op = optimization.create_optimizer(
                 loss, learning_rate, num_train_steps, num_warmup_steps,
@@ -149,7 +147,7 @@ def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
                 false_neg = tf.metrics.false_negatives(
                     label_ids,
                     predicted_labels)
-                return {
+                ret = {
                     "eval_accuracy": accuracy,
                     "f1_score": f1_score,
                     "auc": auc,
@@ -160,6 +158,8 @@ def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
                     "false_positives": false_pos,
                     "false_negatives": false_neg
                 }
+                # print(f"Result: {ret}")
+                return ret
 
             if mode == tf.estimator.ModeKeys.TRAIN:
                 return tf.estimator.EstimatorSpec(
@@ -169,9 +169,6 @@ def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
                 return tf.estimator.EstimatorSpec(
                     mode=mode, loss=loss, eval_metric_ops=eval_metrics)
         else:
-            (predicted_labels, log_probs) = create_model(bert_config,
-                is_training, input_ids, input_mask, segment_ids,
-                label_ids, num_labels)
 
             predictions = {
                 'probabilities': log_probs,
