@@ -3,55 +3,37 @@ import tensorflow as tf
 
 from argparse import ArgumentParser
 from datetime import datetime
+from time import time
 
 from bert import run_classifier
 
 from bert_classify_utils import load_from_folder, create_tokenizer, \
-    model_fn_builder, getPrediction
+    model_fn_builder, get_estimator, getPrediction
+
+from configs import config
 
 
-TRAIN_FOLDER = "imdb/train"
-TEST_FOLDER = "imdb/test"
-LABELS = ['pos', 'neg']
-DATA_COLUMN = "sentence"
-LABEL_COLUMN = "label"
 
-OUTPUT_DIR = "output_dir/"
+class BERTClassifier(object):
 
-VOCAB_FILE = "BERT_BASE_DIR/vocab.txt"
-BERT_CONFIG = "BERT_BASE_DIR/bert_config.json"
-INIT_CHECKPOINT = "BERT_BASE_DIR/bert_model.ckpt"
-# INIT_CHECKPOINT = "output_dir/model.ckpt-468"
-
-MAX_SEQ_LENGTH = 128
-BATCH_SIZE = 32
-LEARNING_RATE = 2e-5
-NUM_TRAIN_EPOCHS = 3.0
-WARMUP_PROPORTION = 0.1
-# Model configs
-SAVE_CHECKPOINTS_STEPS = 500
-SAVE_SUMMARY_STEPS = 100
-
-
-def get_estimator(num_train_steps=None, num_warmup_steps=None,
-                  checkpoint=INIT_CHECKPOINT):
-    run_config = tf.estimator.RunConfig(
-        model_dir=OUTPUT_DIR,
-        save_summary_steps=SAVE_SUMMARY_STEPS,
-        save_checkpoints_steps=SAVE_CHECKPOINTS_STEPS)
-
-    model_fn = model_fn_builder(
-        bert_config=modeling.BertConfig.from_json_file(BERT_CONFIG),
-        init_checkpoint=checkpoint,
-        num_labels=len(LABELS),
-        learning_rate=LEARNING_RATE,
-        num_train_steps=num_train_steps,
-        num_warmup_steps=num_warmup_steps)
-
-    return tf.estimator.Estimator(
-        model_fn=model_fn,
-        config=run_config,
-        params={"batch_size": BATCH_SIZE})
+    def __init__(project="imdb"):
+        self.VOCAB_FILE = config[project]['bert_config']['vocab_file']
+        self.BERT_CONFIG = config[project]['bert_config']['bert_config_file']
+        self.INIT_CHECKPOINT = config[project]['bert_config']['init_checkpoint']
+        self.MODEL_DIR = config[project]['model_dir']
+        self.TRAIN_FOLDER = config[project]['train_folder']
+        self.TEST_FOLDER = config[project]['test_folder']
+        self.TRAIN_BATCH_SIZE = config[project]['train_params']['train_batch_size']
+        self.PREDICT_BATCH_SIZE = config[project]['train_params']['predict_batch_size']
+        self.MAX_SEQ_LENGTH = config[project]['train_params']['max_seq_length']
+        self.LEARNING_RATE = config[project]['train_params']['learning_rate']
+        self.NUM_TRAIN_EPOCHS = config[project]['train_params']['num_train_epochs']
+        self.WARMUP_PROPORTION = config[project]['train_params']['warmup_proportion']
+        self.SAVE_CHECKPOINTS_STEPS = config[project]['train_params']['save_checkpoints_steps']
+        self.SAVE_SUMMARY_STEPS = config[project]['train_params']['save_summary_steps']
+        self.LABELS = config[project]['data']['labels']
+        self.DATA_COLUMN = config[project]['data']['data_column']
+        self.LABEL_COLUMN = config[project]['data']['label_column']
 
 
 def evaluate(tokenizer, estimator):
@@ -60,8 +42,6 @@ def evaluate(tokenizer, estimator):
         TEST_FOLDER, labels=LABELS, data_column=DATA_COLUMN,
         label_column=LABEL_COLUMN)
     print("[INFO] Done loading data...\n")
-
-    test = test.sample(5000)
 
     print(f"[INFO] Started working on evaluation...")
     print("[INFO] Preparing test InputExample...")
@@ -90,13 +70,14 @@ def evaluate(tokenizer, estimator):
     print(f"[INFO] Done evaluating...\n")
 
 
-def train(tokenizer, do_eval=True, init_checkpoint=INIT_CHECKPOINT):
+def train(tokenizer, do_eval=True, init_checkpoint=INIT_CHECKPOINT,
+          batch_size=TRAIN_BATCH_SIZE, bert_config_file=BERT_CONFIG,
+          labels=LABELS, output_dir=MODEL_DIR, save_summary_steps=SAVE_SUMMARY_STEPS,
+          save_checkpoints_steps=SAVE_CHECKPOINTS_STEPS, learning_rate=LEARNING_RATE):
     print("[INFO] Loading train data from folder...")
     train = load_from_folder(TRAIN_FOLDER, labels=LABELS,
         data_column=DATA_COLUMN, label_column=LABEL_COLUMN)
     print("[INFO] Done loading train data...\n")
-
-    train = train.sample(5000)
 
     print("[INFO] Preparing train InputExample...")
     train_inputExamples = train.apply(
@@ -119,14 +100,19 @@ def train(tokenizer, do_eval=True, init_checkpoint=INIT_CHECKPOINT):
         is_training=True,
         drop_remainder=False)
 
-    num_train_steps = int(len(train_features) / BATCH_SIZE * NUM_TRAIN_EPOCHS)
+    num_train_steps = int(len(train_features)/TRAIN_BATCH_SIZE*NUM_TRAIN_EPOCHS)
     num_warmup_steps = int(num_train_steps * WARMUP_PROPORTION)
 
     print(f"[INFO] No. of train steps: {num_train_steps}")
     print(f"[INFO] No. of warmup steps: {num_warmup_steps}")
 
-    estimator = get_estimator(num_train_steps, num_warmup_steps,
-                              checkpoint=init_checkpoint)
+    estimator = get_estimator(
+        init_checkpoint, bert_config_file, labels, output_dir, batch_size,
+        save_summary_steps=save_summary_steps,
+        save_checkpoints_steps=save_checkpoints_steps,
+        learning_rate=learning_rate, num_train_steps=num_train_steps,
+        num_warmup_steps=num_warmup_steps)
+
     print(f'[INFO] Beginning Training...!')
     current_time = datetime.now()
     estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
@@ -135,42 +121,34 @@ def train(tokenizer, do_eval=True, init_checkpoint=INIT_CHECKPOINT):
     if do_eval:
         evaluate(tokenizer, estimator)
 
-    def getPrediction(in_sentences):
-        labels = ["Negative", "Positive"]
-        input_examples = [run_classifier.InputExample(guid="", text_a = x, text_b = None, label = 0) for x in in_sentences] # here, "" is just a dummy label
-        input_features = run_classifier.convert_examples_to_features(input_examples, label_list, MAX_SEQ_LENGTH, tokenizer)
-        predict_input_fn = run_classifier.input_fn_builder(features=input_features, seq_length=MAX_SEQ_LENGTH, is_training=False, drop_remainder=False)
-        predictions = estimator.predict(predict_input_fn)
-        return [(sentence, prediction['probabilities'], labels[prediction['labels']]) for sentence, prediction in zip(in_sentences, predictions)]
-    pred_sentences = [
-      "That movie was absolutely awful",
-      "The acting was a bit lacking",
-      "The film was creative and surprising",
-      "Absolutely fantastic!"]
-    predictions = getPrediction(pred_sentences)
-    print(predictions)
 
-
-def predict(tokenizer, checkpoint, predict_file=None, text=None):
+def predict(tokenizer, checkpoint, predict_file=None, text=None,
+            bert_config_file=BERT_CONFIG, labels=LABELS, output_dir=MODEL_DIR, 
+            batch_size=PREDICT_BATCH_SIZE, max_seq_len=MAX_SEQ_LENGTH):
     if not (predict_file or text):
         raise Exception("Either of the predict_file or text should be provided")
 
-    label_list = list(range(len(LABELS)))
-    estimator = get_estimator(checkpoint=checkpoint)
+    label_list = list(range(len(labels)))
+    estimator = get_estimator(
+        checkpoint, bert_config_file, labels, output_dir, batch_size)
 
     if predict_file:
         with open(predict_file) as f:
             pred_sentences = [line.strip() for line in f.readlines()]
     else:
         pred_sentences = [text.strip()]
+    if len(pred_sentences) == 1:
+        # Adding a dummy 2nd element so that the estimator does not throw Exception
+        pred_sentences.append("")
 
-    print(pred_sentences)
-
-    print(f"[INFO] Beginning predicting...")
+    print(f"[INFO] Begin predicting...!")
+    current_time = time()
     predictions = getPrediction(
-        estimator, pred_sentences, labels=LABELS, label_list=label_list,
-        max_seq_len=MAX_SEQ_LENGTH, tokenizer=tokenizer)
-    print(f"[INFO] Done predicting...\n")
+        estimator, pred_sentences, labels=labels, label_list=label_list,
+        max_seq_len=max_seq_len, tokenizer=tokenizer)
+    if text:
+        predictions = predictions[:1]
+    print(f"[INFO] Predicting took {time() - current_time} secs...!\n")
     print(predictions)
 
 
@@ -205,6 +183,8 @@ if __name__ == "__main__":
             ((args.predict_file or args.text) and args.train)):
         raise Exception("Invalid arguments combinations..!")
 
+    set_global_vars()
+    
     if args.train:
         main(mode='train', skip_eval=args.skip_eval,
              checkpoint=args.checkpoint)

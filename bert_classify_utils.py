@@ -82,44 +82,41 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
         if not is_training:
           return (None, predicted_labels, log_probs)
 
-        # If we're train/eval, compute loss between predicted and actual label
+        # If we train/eval, compute loss between predicted and actual label
         per_example_loss = -tf.reduce_sum(one_hot_labels * log_probs, axis=-1)
         loss = tf.reduce_mean(per_example_loss)
         return (loss, predicted_labels, log_probs)
 
 
-def model_fn_builder(bert_config, init_checkpoint, num_labels,
+def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
                      learning_rate, num_train_steps, num_warmup_steps):
-
-    def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
-        """The `model_fn` for TPUEstimator."""
+    bert_config=modeling.BertConfig.from_json_file(bert_config_file)
+    def model_fn(features, labels, mode, params):
 
         input_ids = features["input_ids"]
         input_mask = features["input_mask"]
         segment_ids = features["segment_ids"]
         label_ids = features["label_ids"]
 
-        is_predicting = (mode == tf.estimator.ModeKeys.PREDICT)
-        is_training = not is_predicting
+        is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
         (loss, predicted_labels, log_probs) = create_model(bert_config,
             is_training, input_ids, input_mask, segment_ids,
             label_ids, num_labels)
 
-        tvars = tf.trainable_variables()
-        if init_checkpoint:
-            (assignment_map, _) = \
-                modeling.get_assignment_map_from_checkpoint(
-                    tvars, init_checkpoint)
-            tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
+        (assignment_map, _) = \
+            modeling.get_assignment_map_from_checkpoint(
+                tf.trainable_variables(), init_checkpoint)
+        tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
 
-        # TRAIN and EVAL
-        if not is_predicting:
-
+        if mode == tf.estimator.ModeKeys.TRAIN:
             train_op = optimization.create_optimizer(
                 loss, learning_rate, num_train_steps, num_warmup_steps,
                 use_tpu=False)
+            return tf.estimator.EstimatorSpec(
+                mode=mode, loss=loss, train_op=train_op)
 
+        elif mode == tf.estimator.ModeKeys.EVAL:
             # Calculate evaluation metrics. 
             def metric_fn(label_ids, predicted_labels):
                 accuracy = tf.metrics.accuracy(label_ids, predicted_labels)
@@ -158,25 +155,39 @@ def model_fn_builder(bert_config, init_checkpoint, num_labels,
                     "false_positives": false_pos,
                     "false_negatives": false_neg
                 }
-                # print(f"Result: {ret}")
                 return ret
-
-            if mode == tf.estimator.ModeKeys.TRAIN:
-                return tf.estimator.EstimatorSpec(
-                    mode=mode, loss=loss, train_op=train_op)
-            else:
-                eval_metrics = metric_fn(label_ids, predicted_labels)
-                return tf.estimator.EstimatorSpec(
-                    mode=mode, loss=loss, eval_metric_ops=eval_metrics)
+            eval_metrics = metric_fn(label_ids, predicted_labels)
+            return tf.estimator.EstimatorSpec(
+                mode=mode, loss=loss, eval_metric_ops=eval_metrics)
         else:
-
             predictions = {
                 'probabilities': log_probs,
                 'labels': predicted_labels
             }
             return tf.estimator.EstimatorSpec(mode, predictions=predictions)
-
     return model_fn
+
+
+def get_estimator(checkpoint, bert_config_file, labels, output_dir, batch_size,
+                  save_summary_steps=None, save_checkpoints_steps=None,
+                  learning_rate=None, num_train_steps=None, num_warmup_steps=None):
+    run_config = tf.estimator.RunConfig(
+        model_dir=output_dir,
+        save_summary_steps=save_summary_steps,
+        save_checkpoints_steps=save_checkpoints_steps)
+
+    model_fn = model_fn_builder(
+        bert_config_file=bert_config_file,
+        init_checkpoint=checkpoint,
+        num_labels=len(labels),
+        learning_rate=learning_rate,
+        num_train_steps=num_train_steps,
+        num_warmup_steps=num_warmup_steps)
+
+    return tf.estimator.Estimator(
+        model_fn=model_fn,
+        config=run_config,
+        params={"batch_size": batch_size})
 
 
 def getPrediction(estimator, in_sentences, labels, label_list, max_seq_len,
