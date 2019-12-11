@@ -17,23 +17,11 @@ class BERTClassifier(object):
 
     def __init__(self, project="imdb", mode="predict", skip_eval=True):
         try:
-            self.vocab_file = config[project]['bert_config']['vocab_file']
-            self.bert_config_file = config[project]['bert_config']['bert_config_file']
-            self.init_checkpoint = config[project]['bert_config']['init_checkpoint']
+            self.vocab_file = config[project]['vocab_file']
+            self.bert_config_file = config[project]['bert_config_file']
+            self.max_seq_length = config[project]['max_seq_length']
+            self.labels = config[project]['labels']
             self.model_dir = config[project]['model_dir']
-            self.train_folder = config[project]['train_folder']
-            self.test_folder = config[project]['test_folder']
-            self.train_batch_size = config[project]['train_params']['train_batch_size']
-            self.predict_batch_size = config[project]['train_params']['predict_batch_size']
-            self.max_seq_length = config[project]['train_params']['max_seq_length']
-            self.learning_rate = config[project]['train_params']['learning_rate']
-            self.num_train_epochs = config[project]['train_params']['num_train_epochs']
-            self.warmup_proportion = config[project]['train_params']['warmup_proportion']
-            self.save_checkpoints_steps = config[project]['train_params']['save_checkpoints_steps']
-            self.save_summary_steps = config[project]['train_params']['save_summary_steps']
-            self.labels = config[project]['data']['labels']
-            self.data_column = config[project]['data']['data_column']
-            self.label_column = config[project]['data']['label_column']
             self.estimator = None
         except:
             raise
@@ -43,17 +31,35 @@ class BERTClassifier(object):
         print("[INFO] Done preparing tokenizer...\n")
 
         if mode == 'train':
-            self.train(do_eval=(not skip_eval))
+            try:
+                train_params = config[project]['train_params']
+                self.init_checkpoint = train_params['init_checkpoint']
+                self.train_batch_size = train_params['train_batch_size']
+                self.learning_rate = train_params['learning_rate']
+                self.num_train_epochs = train_params['num_train_epochs']
+                self.warmup_proportion = train_params['warmup_proportion']
+                self.save_checkpoints_steps = train_params['save_checkpoints_steps']
+                self.save_summary_steps = train_params['save_summary_steps']
+                train_params_data = train_params['data']
+                self.train_folder = train_params_data['train_folder']
+                self.test_folder = train_params_data['test_folder']
+                self.data_column = train_params_data['data_column']
+                self.label_column = train_params_data['label_column']
+            except:
+                raise
+            self.train(skip_eval)
         else:
             try:
-                self.model_checkpoint = config[project]['model_checkpoint']
+                predict_params = config[project]['predict_params']
+                self.model_checkpoint = predict_params['model_checkpoint']
+                self.predict_batch_size = predict_params['predict_batch_size']
             except:
                 raise Exception("model_checkpoint is not defined in the configs file")
             self.estimator = get_estimator(
                 self.model_checkpoint, self.bert_config_file, self.labels,
                 self.model_dir, self.predict_batch_size)
 
-    def train(self, do_eval=False):
+    def train(self, skip_eval=True):
         print("[INFO] Loading train data from folder...")
         train = load_from_folder(self.train_folder, labels=self.labels,
             data_column=self.data_column, label_column=self.label_column)
@@ -99,7 +105,7 @@ class BERTClassifier(object):
         self.estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
         print(f"[INFO] Training took time {datetime.now() - current_time} sec..!\n")
 
-        if do_eval:
+        if not skip_eval:
             evaluate()
 
     def evaluate(self):
@@ -175,7 +181,6 @@ if __name__ == "__main__":
     if (args.skip_eval and args.predict) or (
             ((args.file or args.text) and args.train)):
         raise Exception("Invalid arguments combinations..!")
-
 
     if args.train:
         mode = "train"
