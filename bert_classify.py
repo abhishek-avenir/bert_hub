@@ -1,5 +1,7 @@
 
+import numpy as np
 import tensorflow as tf
+import pickle
 
 from argparse import ArgumentParser
 from datetime import datetime
@@ -7,21 +9,21 @@ from time import time
 
 from bert import run_classifier
 
-from bert_classify_utils import load_from_folder, create_tokenizer, \
-    model_fn_builder, get_estimator, getPrediction
+from bert_classify_utils import load_dataset, load_from_folder, \
+    create_tokenizer, model_fn_builder, get_estimator, getPrediction
 
-from configs import config
+from config import PARAMS
 
 
 class BERTClassifier(object):
 
-    def __init__(self, project="imdb", mode="predict", skip_eval=True):
+    def __init__(self, project, mode, skip_eval=False):
         try:
-            self.vocab_file = config[project]['vocab_file']
-            self.bert_config_file = config[project]['bert_config_file']
-            self.max_seq_length = config[project]['max_seq_length']
-            self.labels = config[project]['labels']
-            self.model_dir = config[project]['model_dir']
+            params = PARAMS[project]
+            self.vocab_file = params['vocab_file']
+            self.bert_config_file = params['bert_config_file']
+            self.max_seq_length = params['max_seq_length']
+            self.label_encoder_pkl = params['label_encoder']
             self.estimator = None
         except:
             raise
@@ -31,47 +33,69 @@ class BERTClassifier(object):
         print("[INFO] Done preparing tokenizer...\n")
 
         if mode == 'train':
-            try:
-                train_params = config[project]['train_params']
-                self.init_checkpoint = train_params['init_checkpoint']
-                self.train_batch_size = train_params['train_batch_size']
-                self.learning_rate = train_params['learning_rate']
-                self.num_train_epochs = train_params['num_train_epochs']
-                self.warmup_proportion = train_params['warmup_proportion']
-                self.save_checkpoints_steps = train_params['save_checkpoints_steps']
-                self.save_summary_steps = train_params['save_summary_steps']
-                train_params_data = train_params['data']
-                self.train_folder = train_params_data['train_folder']
-                self.test_folder = train_params_data['test_folder']
-                self.data_column = train_params_data['data_column']
-                self.label_column = train_params_data['label_column']
-            except:
-                raise
-            self.train(skip_eval)
+            self.set_train_test_params(params)
+            self.do_train()
+            if not skip_eval and not self.test.empty:
+                self.do_eval()
         else:
             try:
-                predict_params = config[project]['predict_params']
+                predict_params = params['predict_params']
                 self.model_checkpoint = predict_params['model_checkpoint']
                 self.predict_batch_size = predict_params['predict_batch_size']
             except:
-                raise Exception("model_checkpoint is not defined in the configs file")
+                raise
+            with open(self.label_encoder_pkl, 'rb') as f:
+                self.le = pickle.load(f)
+            self.labels = self.le.classes_
             self.estimator = get_estimator(
                 self.model_checkpoint, self.bert_config_file, self.labels,
-                self.model_dir, self.predict_batch_size)
+                self.predict_batch_size)
 
-    def train(self, skip_eval=True):
-        print("[INFO] Loading train data from folder...")
-        train = load_from_folder(self.train_folder, labels=self.labels,
-            data_column=self.data_column, label_column=self.label_column)
-        print("[INFO] Done loading train data...\n")
+    def set_train_test_params(self, params):
+        self.test = None
+        train_params = params['train_params']
+        self.init_checkpoint = train_params['init_checkpoint']
+        self.model_dir = train_params['model_dir']
+        self.train_batch_size = train_params['train_batch_size']
+        self.learning_rate = train_params['learning_rate']
+        self.num_train_epochs = train_params['num_train_epochs']
+        self.warmup_proportion = train_params.get('warmup_proportion')
+        self.save_checkpoints_steps = train_params.get('save_checkpoints_steps')
+        self.save_summary_steps = train_params.get('save_summary_steps')
+        train_params_data = train_params['data']
+        try:
+            train_folder = train_params_data['train_folder']
+            print(f"Train folder: {train_folder}")
+            test_folder = train_params_data.get('test_folder')
+            print("[INFO] Loading train data from folder...")
+            self.train, self.le = load_from_folder(train_folder)
+            if test_folder:
+                print("[INFO] Loading test data from folder...")
+                self.test, _ = load_from_folder(test_folder, self.le)
+        except:
+            try:
+                print("[INFO] Loading train data from csv...")
+                train_csv = train_params_data['train_csv']
+                test_csv = train_params_data.get('test_csv')
+                self.train, self.le = load_dataset(train_csv)
+                if test_csv:
+                    print("[INFO] Loading test data from csv...")
+                    self.test, _ = load_dataset(test_csv, self.le)
+            except:
+                raise Exception("None of the `train_folder` or `train_csv` is "
+                                "mentioned in configuration")
+        self.labels = self.le.classes_
+        with open(self.label_encoder_pkl, 'wb') as f:
+            pickle.dump(self.le, f)
 
+    def do_train(self):
         print("[INFO] Preparing train InputExample...")
-        train_inputExamples = train.apply(
+        train_inputExamples = self.train.apply(
             lambda x: run_classifier.InputExample(
                 guid=None,
-                text_a=x[self.data_column],
+                text_a=x['sentence'],
                 text_b=None,
-                label=x[self.label_column]), axis=1)
+                label=x['label']), axis=1)
         print("[INFO] Done preparing train InputExample...\n")
 
         label_list = list(range(len(self.labels)))
@@ -86,7 +110,8 @@ class BERTClassifier(object):
             is_training=True,
             drop_remainder=False)
 
-        num_train_steps = int(len(train_features)/self.train_batch_size*self.num_train_epochs)
+        num_train_steps = \
+            int(len(train_features)/self.train_batch_size*self.num_train_epochs)
         num_warmup_steps = int(num_train_steps * self.warmup_proportion)
 
         print(f"[INFO] No. of train steps: {num_train_steps}")
@@ -94,38 +119,29 @@ class BERTClassifier(object):
 
         self.estimator = get_estimator(
             self.init_checkpoint, self.bert_config_file, self.labels,
-            self.model_dir, self.train_batch_size,
+            self.train_batch_size, self.model_dir,
             save_summary_steps=self.save_summary_steps,
             save_checkpoints_steps=self.save_checkpoints_steps,
             learning_rate=self.learning_rate, num_train_steps=num_train_steps,
             num_warmup_steps=num_warmup_steps)
 
-        print(f'[INFO] Beginning Training...!')
+        print(f'[INFO] Begin Training...!')
         current_time = datetime.now()
         self.estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
         print(f"[INFO] Training took time {datetime.now() - current_time} sec..!\n")
 
-        if not skip_eval:
-            evaluate()
-
-    def evaluate(self):
-        print("[INFO] Loading data from test folder...")
-        test = load_from_folder(
-            self.test_folder, labels=self.labels, data_column=self.data_column,
-            label_column=self.label_column)
-        print("[INFO] Done loading data...\n")
-
+    def do_eval(self):
         print(f"[INFO] Started working on evaluation...")
         print("[INFO] Preparing test InputExample...")
-        test_inputExamples = test.apply(
+        test_inputExamples = self.test.apply(
             lambda x: run_classifier.InputExample(
                 guid=None,
-                text_a=x[self.data_column],
+                text_a=x['sentence'],
                 text_b=None,
-                label=x[self.label_column]), axis=1)
+                label=x['label']), axis=1)
         print("[INFO] Done preparing test InputExample...\n")
 
-        label_list = list(range(len(LABELS)))
+        label_list = list(range(len(self.labels)))
         print("[INFO] Preparing test features...")
         test_features = run_classifier.convert_examples_to_features(
             test_inputExamples, label_list, self.max_seq_length, self.tokenizer)
@@ -137,9 +153,11 @@ class BERTClassifier(object):
             is_training=False,
             drop_remainder=False)
 
-        print(f'[INFO] Beginning evaluating...!')
-        self.estimator.evaluate(input_fn=test_input_fn, steps=None)
+        print(f'[INFO] Begin evaluating...!')
+        result = self.estimator.evaluate(input_fn=test_input_fn, steps=None)
         print(f"[INFO] Done evaluating...\n")
+        for key in sorted(result.keys()):
+            print(f"[INFO]  {key} = {result[key]}")
 
     def predict(self, predict_file=None, text=None):
         if not (predict_file or text):
@@ -163,11 +181,19 @@ class BERTClassifier(object):
         if text:
             predictions = predictions[:1]
         print(f"[INFO] Predicting took {time() - current_time} secs...!\n")
-        print(predictions)
+        for pred in predictions:
+            probabilities = pred[1]
+            tops = np.argsort(probabilities)[::-1]
+            top1_prob = probabilities[tops[0]]
+            top2_prob = probabilities[tops[1]]
+            second_top = self.labels[tops[1]]
+            print("TEXT: \"{}\" ==> {} {}".format(
+                pred[0], pred[2], {pred[2]: top1_prob, second_top: top2_prob}))
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
+    parser.add_argument('-p', "--project", required=True)
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--train", action='store_true')
     group.add_argument("--predict", action='store_true')
@@ -189,5 +215,6 @@ if __name__ == "__main__":
             raise Exception("Either of `--predict-file` or `--text` "
                             "should be specified along with `--predict`")
         mode = 'predict'
-    bc = BERTClassifier(project="imdb", mode=mode)
-    bc.predict(args.file, args.text)
+    bc = BERTClassifier(project=args.project, mode=mode, skip_eval=args.skip_eval)
+    if args.predict:
+        bc.predict(args.file, args.text)

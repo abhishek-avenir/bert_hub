@@ -1,36 +1,60 @@
 
-from sklearn.model_selection import train_test_split
 import os
 import pandas as pd
 import re
 import tensorflow as tf
 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 from tensorflow import keras
 from bert import modeling
 from bert import optimization
 from bert import run_classifier
 from bert import tokenization
 
-def load_dataset(csv_file):
-    pass
+
+def transform_labels(df, le=None):
+    if not le:
+        le = LabelEncoder()
+        df['label'] = le.fit_transform(df['label'])
+    else:
+        df['label'] = le.transform(df['label'])
+    return df.reset_index(drop=True), le
 
 
-def split_into_train_test(df):
-    pass
+def load_dataset(csv_file, le=None):
+    df = pd.read_csv(csv_file)
+    return transform_labels(df, le)
 
 
-def load_from_folder(path, labels, data_column, label_column):
-    i = 0
+def split_into_train_test(csv_file, stratify=True, **kwargs):
+    dirname = os.path.dirname(os.path.abspath(csv_file))
+    df = pd.read_csv(csv_file)
+    X = df['sentence']
+    y = df['label']
+    stratify_col = None
+    if stratify:
+        stratify_col = y
+    train_X, test_X, train_y, test_y = \
+        train_test_split(X, y, stratify=stratify_col, **kwargs)
+    train = pd.concat([train_X, train_y], axis=1).reset_index(drop=True)
+    test = pd.concat([test_X, test_y], axis=1).reset_index(drop=True)
+    train.to_csv(os.path.join(dirname, 'train.csv'), index=False)
+    test.to_csv(os.path.join(dirname, 'test.csv'), index=False)
+    return train, test
+
+
+def load_from_folder(path, le=None):
     data = {'sentence': [], 'label': []}
-    for folder in labels:
+    for folder in os.path.listdir(path):
         folder_path = os.path.join(path, folder)
         for file in os.listdir(folder_path):
             file_path = os.path.join(folder_path, file)
             with tf.gfile.GFile(file_path, "r") as f:
-                data[data_column].append(f.read())
-                data[label_column].append(i)
-        i += 1
-    return pd.DataFrame.from_dict(data).reset_index(drop=True)
+                data['sentence'].append(f.read())
+                data['label'].append(folder)
+    df = pd.DataFrame.from_dict(data)
+    return transform_labels(df, le)
 
 
 def create_tokenizer(vocab_file, do_lower_case=True):
@@ -78,14 +102,10 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
 
         predicted_labels = tf.squeeze(
             tf.argmax(log_probs, axis=-1, output_type=tf.int32))
-        # If we're predicting, we want predicted labels and the probabiltiies.
-        if not is_training:
-          return (None, predicted_labels, log_probs)
 
-        # If we train/eval, compute loss between predicted and actual label
         per_example_loss = -tf.reduce_sum(one_hot_labels * log_probs, axis=-1)
         loss = tf.reduce_mean(per_example_loss)
-        return (loss, predicted_labels, log_probs)
+        return (per_example_loss, loss, predicted_labels, log_probs)
 
 
 def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
@@ -100,9 +120,10 @@ def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
-        (loss, predicted_labels, log_probs) = create_model(bert_config,
-            is_training, input_ids, input_mask, segment_ids,
-            label_ids, num_labels)
+        (per_example_loss, loss, predicted_labels, log_probs) = \
+            create_model(bert_config,
+                is_training, input_ids, input_mask, segment_ids,
+                label_ids, num_labels)
 
         (assignment_map, _) = \
             modeling.get_assignment_map_from_checkpoint(
@@ -118,45 +139,54 @@ def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
 
         elif mode == tf.estimator.ModeKeys.EVAL:
             # Calculate evaluation metrics. 
-            def metric_fn(label_ids, predicted_labels):
+
+            def metric_fn(per_example_loss, label_ids, predicted_labels):
                 accuracy = tf.metrics.accuracy(label_ids, predicted_labels)
-                f1_score = tf.contrib.metrics.f1_score(
-                    label_ids,
-                    predicted_labels)
-                auc = tf.metrics.auc(
-                    label_ids,
-                    predicted_labels)
-                recall = tf.metrics.recall(
-                    label_ids,
-                    predicted_labels)
-                precision = tf.metrics.precision(
-                    label_ids,
-                    predicted_labels) 
-                true_pos = tf.metrics.true_positives(
-                    label_ids,
-                    predicted_labels)
-                true_neg = tf.metrics.true_negatives(
-                    label_ids,
-                    predicted_labels)
-                false_pos = tf.metrics.false_positives(
-                    label_ids,
-                    predicted_labels)  
-                false_neg = tf.metrics.false_negatives(
-                    label_ids,
-                    predicted_labels)
-                ret = {
+                loss = tf.metrics.mean(values=per_example_loss)
+                return {
                     "eval_accuracy": accuracy,
-                    "f1_score": f1_score,
-                    "auc": auc,
-                    "precision": precision,
-                    "recall": recall,
-                    "true_positives": true_pos,
-                    "true_negatives": true_neg,
-                    "false_positives": false_pos,
-                    "false_negatives": false_neg
+                    "eval_loss": loss,
                 }
-                return ret
-            eval_metrics = metric_fn(label_ids, predicted_labels)
+            # def metric_fn(label_ids, predicted_labels):
+            #     accuracy = tf.metrics.accuracy(label_ids, predicted_labels)
+            #     f1_score = tf.contrib.metrics.f1_score(
+            #         label_ids,
+            #         predicted_labels)
+            #     auc = tf.metrics.auc(
+            #         label_ids,
+            #         predicted_labels)
+            #     recall = tf.metrics.recall(
+            #         label_ids,
+            #         predicted_labels)
+            #     precision = tf.metrics.precision(
+            #         label_ids,
+            #         predicted_labels) 
+            #     true_pos = tf.metrics.true_positives(
+            #         label_ids,
+            #         predicted_labels)
+            #     true_neg = tf.metrics.true_negatives(
+            #         label_ids,
+            #         predicted_labels)
+            #     false_pos = tf.metrics.false_positives(
+            #         label_ids,
+            #         predicted_labels)  
+            #     false_neg = tf.metrics.false_negatives(
+            #         label_ids,
+            #         predicted_labels)
+            #     ret = {
+            #         "eval_accuracy": accuracy,
+            #         "f1_score": f1_score,
+            #         # "auc": auc,
+            #         "precision": precision,
+            #         "recall": recall,
+            #         "true_positives": true_pos,
+            #         "true_negatives": true_neg,
+            #         "false_positives": false_pos,
+            #         "false_negatives": false_neg
+            #     }
+            #     return ret
+            eval_metrics = \
+                metric_fn(per_example_loss, label_ids, predicted_labels)
             return tf.estimator.EstimatorSpec(
                 mode=mode, loss=loss, eval_metric_ops=eval_metrics)
         else:
@@ -168,7 +198,7 @@ def model_fn_builder(bert_config_file, init_checkpoint, num_labels,
     return model_fn
 
 
-def get_estimator(checkpoint, bert_config_file, labels, output_dir, batch_size,
+def get_estimator(checkpoint, bert_config_file, labels, batch_size, output_dir=None,
                   save_summary_steps=None, save_checkpoints_steps=None,
                   learning_rate=None, num_train_steps=None, num_warmup_steps=None):
     run_config = tf.estimator.RunConfig(
@@ -200,6 +230,5 @@ def getPrediction(estimator, in_sentences, labels, label_list, max_seq_len,
         features=input_features, seq_length=max_seq_len, is_training=False,
         drop_remainder=False)
     predictions = estimator.predict(predict_input_fn)
-    return [(sentence, prediction['probabilities'],
-             labels[prediction['labels']])
-            for sentence, prediction in zip(in_sentences, predictions)]
+    return [(sentence, pred['probabilities'], labels[pred['labels']])
+            for sentence, pred in zip(in_sentences, predictions)]
