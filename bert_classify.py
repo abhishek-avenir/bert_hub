@@ -181,14 +181,18 @@ class BERTClassifier(object):
         if text:
             predictions = predictions[:1]
         print(f"[INFO] Predicting took {time() - current_time} secs...!\n")
+        ret_predictions = []
         for pred in predictions:
             probabilities = pred[1]
             tops = np.argsort(probabilities)[::-1]
             top1_prob = probabilities[tops[0]]
             top2_prob = probabilities[tops[1]]
             second_top = self.labels[tops[1]]
-            print("TEXT: \"{}\" ==> {} {}".format(
+            ret_predictions.append("TEXT: \"{}\" ==> {} {}".format(
                 pred[0], pred[2], {pred[2]: top1_prob, second_top: top2_prob}))
+        for ret_prediction in ret_predictions:
+            print(ret_prediction)
+        return ret_predictions
 
 
 if __name__ == "__main__":
