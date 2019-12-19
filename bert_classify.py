@@ -190,6 +190,8 @@ class BERTClassifier(object):
             second_top = self.labels[tops[1]]
             ret_predictions.append("TEXT: \"{}\" ==> {} {}".format(
                 pred[0], pred[2], {pred[2]: top1_prob, second_top: top2_prob}))
+            # for top in tops:
+                # print(f"Label: {self.labels[top]} ==> {probabilities[top]}")
         for ret_prediction in ret_predictions:
             print(ret_prediction)
         return ret_predictions

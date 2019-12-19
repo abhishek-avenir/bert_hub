@@ -1,0 +1,653 @@
+sentence,label
+get how much can I spend,Account balance
+what’s my account balance,Account balance
+I need to include new beneficiary,Add Payee
+I need to pay someone else,Transfer to 3rd party
+ajfoiej afjaeo afjaeo afoeial lf aa foea,Unknown
+get what funds do I have available,Account balance
+I need to transfer money,Transfer own Account
+ajfoiej transfer afjaeo afoeial lf aa foea,Unknown
+I want to move my money,Transfer own Account
+I need to pay [name],Bill Payment
+I need to move cash,Transfer own Account
+what’s my account balance,Account balance
+what are my account transactions,Transaction history
+show me account summary,Account balance
+please get summary of accounts,Account balance
+make a transfer,Transfer own Account
+I want to add new payee,Add Payee
+I’d like to move my money,Transfer own Account
+get Balance for account [account_type],Account balance
+account galjlal afleio a,Unknown
+I’d like to transfer funds,Transfer to 3rd party
+what is my History of account,Transaction history
+can someone phone me,Req to call back
+please get account overview,Account balance
+I want to send funds,Transfer to 3rd party
+transaction summary,Transaction history
+ajfoiej add afjaeo afoeial lf aa foea,Unknown
+account balance,Account balance
+get money available,Account balance
+Pay bill,Bill Payment
+I’d like to send funds,Transfer to 3rd party
+what is my account overview,Account balance
+I want to pay my [name] bill,Bill Payment
+talk to someone now,Req for Human Agent
+show me Balance,Account balance
+I need to transfer funds,Transfer own Account
+tell me my account balance,Account balance
+Add a new payee,Add Payee
+I need to talk to a real person,Req for Human Agent
+can I talk to a human,Req for Human Agent
+I want to see summary of balances,Account balance
+make funds transfer,Transfer to 3rd party
+I want to find Balance for account [account_type],Account balance
+Perform a money transfer,Transfer to 3rd party
+what’s my Balance,Account balance
+I need help now,Req for Human Agent
+what’s my account sum,Account balance
+what’s my short statement,Account balance
+I need to Remove Beneficiary,Delete Payee
+send funds to another person,Transfer to 3rd party
+I’d like to transfer,Transfer own Account
+what are my account Transactions,Transaction history
+I want to do a bank transfer,Transfer to 3rd party
+what’s my summary of accounts,Account balance
+please get short statement,Account balance
+assist me with performing a bank transfer,Transfer to 3rd party
+ajfoiej account afjaeo afoeial lf aa foea,Unknown
+I want to send money to [person],Transfer to 3rd party
+I want bank to call me,Req to call back
+can I move cash,Transfer own Account
+request make a payment to [person],Transfer to 3rd party
+add payee,Add Payee
+assist me with transferring funds,Transfer to 3rd party
+I need to make a transfer,Transfer own Account
+show me money available,Account balance
+I want the bank to give me a call,Req to call back
+I want to find money available,Account balance
+add new payee,Add Payee
+I need to talk to a human,Req for Human Agent
+help me to erase payee,Delete Payee
+what is my Account summary,Account balance
+how much can I spend,Account balance
+show me account balance,Account balance
+make a payment to [person],Transfer to 3rd party
+send funds to another person,Transfer to 3rd party
+Account transaction,Transaction history
+put me through to a real person,Req for Human Agent
+please get Balance,Account balance
+what’s my short statement,Account balance
+show me summary of accounts,Account balance
+assist me with transferring money to another person,Transfer to 3rd party
+can I Add beneficiary,Add Payee
+can I move my money,Transfer own Account
+what funds do I have available,Account balance
+can you Pay bill,Bill Payment
+move funds between my accounts,Transfer own Account
+can I transfer funds,Transfer to 3rd party
+assist me with transferring funds,Transfer to 3rd party
+I’d like to move from [account_type] to [account_type],Transfer own Account
+delete Beneficiary,Delete Payee
+can I create new payee,Add Payee
+get account summary,Account balance
+I’d like to create a bank transfer,Transfer to 3rd party
+pay someone new,Add Payee
+ask a bank clerk to call back,Req to call back
+what’s the money available,Account balance
+request move from [account_type] to [account_type],Transfer own Account
+what’s my account summary,Account balance
+I want to Speak with an agent,Req for Human Agent
+I’d like to move money,Transfer own Account
+what’s my summary of balances,Account balance
+please get balance for all accounts,Account balance
+can I transfer funds,Transfer own Account
+what funds do I have available,Account balance
+bill payment,Bill Payment
+ask the bank to Call me back,Req to call back
+transfer money to another person,Transfer to 3rd party
+assist me with Transfer to payee,Transfer to 3rd party
+I want to see account balance,Account balance
+acc transactions,Transaction history
+I need to Transfer between my accounts,Transfer own Account
+what were the account transactions,Transaction history
+put me through an agent,Req for Human Agent
+I need a call back,Req to call back
+what is my short statement,Account balance
+money available,Account balance
+I need to pay [person],Transfer to 3rd party
+ajfoiej summary afjaeo afoeial lf aa foea,Unknown
+I need some money to be transferred,Transfer own Account
+transfer from my [account_type] to my [account_type],Transfer own Account
+I need help now,Req for Human Agent
+get Balance for account [account_type],Account balance
+please get How much money I have,Account balance
+what were the Transactions,Transaction history
+ask the bank to contact me,Req to call back
+ajfoiej payee afjaeo afoeial lf aa foea,Unknown
+help me to transfer funds,Transfer own Account
+tell me my money available,Account balance
+I want to find How much money I have,Account balance
+I want the bank to Call me back,Req to call back
+can I pay a bill,Bill Payment
+I need to move my money,Transfer own Account
+transfer to an agent,Req for Human Agent
+I want to send money,Transfer to 3rd party
+Add afoaeijl as beneficiary,Add Payee
+help me to move funds between my accounts,Transfer own Account
+can I add new beneficiary,Add Payee
+I want to transfer from my [account_type] to my [account_type],Transfer own Account
+please get what’s left in my account,Account balance
+help me to Add beneficiary,Add Payee
+display short statement,Account balance
+assist me with transferring money to another person,Transfer to 3rd party
+tell me how much can I spend,Account balance
+get Balance,Account balance
+transfer me to an agent,Req for Human Agent
+tell me my summary of balances,Account balance
+I request to be transferred to an agent,Req for Human Agent
+help me to move my money,Transfer own Account
+get money available,Account balance
+phone me,Req to call back
+call back,Req to call back
+I’d like to transfer funds,Transfer own Account
+display account balance,Account balance
+ask the bank to get in touch with me,Req to call back
+show me what funds I have available,Account balance
+set up a new payee,Add Payee
+ask a bank clerk to give me a call,Req to call back
+put me through I need help now,Req for Human Agent
+I want to find what’s left in my account,Account balance
+ajfoiej afjaeo afjaeo afoeial lf aa foea,Unknown
+get summary of accounts,Account balance
+I need to transfer money to another person,Transfer to 3rd party
+I want to see how much I can spend,Account balance
+help me to delete payee,Delete Payee
+give me a call,Req to call back
+why do I have so few money,Transaction history
+help me to pay my [name] bill,Bill Payment
+what were the account transactions,Transaction history
+ask the bank to phone me,Req to call back
+I want to find short statement,Account balance
+display account balance,Account balance
+I want to move money,Transfer own Account
+I’d like to pay someone else,Transfer to 3rd party
+move money,Transfer own Account
+I want to delete Beneficiary,Delete Payee
+tell me my Account summary,Account balance
+I need to pay someone new,Add Payee
+set up a new payee,Add Payee
+make a bank transfer,Transfer to 3rd party
+can you call me,Req to call back
+I need to Add beneficiary,Add Payee
+request to pay [person],Transfer to 3rd party
+get How much money I have,Account balance
+please get summary of balances,Account balance
+assist me with sending money to payee,Transfer to 3rd party
+I want to see my account transactions,Transaction history
+can I get a callback,Req to call back
+I’d like to transfer money to payee,Transfer to 3rd party
+move my money,Transfer own Account
+request fund transfer to payee,Transfer to 3rd party
+I want to see my account transactions,Transaction history
+can I talk to someone now,Req for Human Agent
+transfer funds,Transfer to 3rd party
+send funds,Transfer to 3rd party
+please get account balance,Account balance
+what are my account transactions,Transaction history
+help me to add payee,Add Payee
+ajfoiej balance afjaeo afoeial lf aa foea,Unknown
+ajfoiej afjaeo another afoeial lf aa foea,Unknown
+balance for all accounts,Account balance
+can I pay [name],Bill Payment
+Let me Speak with an agent,Req for Human Agent
+I need to create new payee,Add Payee
+can I transfer to another person,Transfer to 3rd party
+I need you to transfer me to an agent,Req for Human Agent
+help me to add new payee,Add Payee
+I need to make a bill payment,Bill Payment
+ask the bank to call back,Req to call back
+get account sum,Account balance
+display summary of accounts,Account balance
+transfer to another person,Transfer to 3rd party
+I want to Remove Beneficiary,Delete Payee
+send money to [person],Transfer to 3rd party
+I’d like to send a bank transfer,Transfer to 3rd party
+tell me my Balance,Account balance
+can you give me a call,Req to call back
+help me to transfer,Transfer own Account
+ask a bank clerk to call me,Req to call back
+I want to find Account summary,Account balance
+I want to transfer funds to another person,Transfer to 3rd party
+please get account summary,Account balance
+I want the bank to phone me,Req to call back
+ask a bank clerk to contact me,Req to call back
+help me to transfer funds,Transfer own Account
+display account summary,Account balance
+can you phone me,Req to call back
+tell me what funds I have available,Account balance
+I want the bank to get in touch with me,Req to call back
+can I move funds between my accounts,Transfer own Account
+I want to see short statement,Account balance
+afiea transaction afoila oaeoa oeoa account,Unknown
+I want to find Balance,Account balance
+ajfoiej afjaeo afjaeo afoeial lf aa foea,Unknown
+please get summary of balances,Account balance
+Add a beneficiary,Add Payee
+I want to see account balance,Account balance
+can I send money to [person],Transfer to 3rd party
+I request to talk to a human,Req for Human Agent
+I need to Pay bill,Bill Payment
+request transfer from my [account_type] to my [account_type],Transfer own Account
+account overview,Account balance
+ajfoiej afjaeo afjaeo transactions lf aa foea,Unknown
+I want the bank to callback,Req to call back
+display money available,Account balance
+request create a bank transfer,Transfer to 3rd party
+ajfoiej afjaeo afjaeo afoeial lf aa foea,Unknown
+request to move some money,Transfer own Account
+ajfoiej afjaeo another afoeial lf aa foea,Unknown
+pay a bill,Bill Payment
+How much money do I have,Account balance
+can I talk to a person,Req for Human Agent
+ajfoiej afjaeo move money lf aa foea,Unknown
+I request to talk to someone now,Req for Human Agent
+can I pay my [name] bill,Bill Payment
+what’s my balance for all accounts,Account balance
+I need to move funds between my accounts,Transfer own Account
+move money between my accounts,Transfer own Account
+ajfoiej call afjaeo afoeial lf aa foea,Unknown
+can I get a Call back,Req to call back
+help me to send money to [person],Transfer to 3rd party
+I want to Add beneficiary,Add Payee
+what were the Account transactions,Transaction history
+I want to create new payee,Add Payee
+funds transfer,Transfer own Account
+please get what funds I have available,Account balance
+can I make a payment to [person],Transfer to 3rd party
+I’d like to pay [person],Transfer to 3rd party
+please get account summary,Account balance
+I need you to call back,Req to call back
+show me account summary,Account balance
+ask the bank to give me a call,Req to call back
+request send money to [person],Transfer to 3rd party
+send funds to another person,Transfer to 3rd party
+I want to transfer funds,Transfer to 3rd party
+I want to transfer money to another person,Transfer to 3rd party
+I have to talk to a person,Req for Human Agent
+I’d like to send money to [person],Transfer to 3rd party
+can you erase payee,Delete Payee
+why do I have so few money,Transaction history
+ajfoiej account afjaeo afoeial lf aa foea,Unknown
+send money to payee,Transfer to 3rd party
+help me to perform a money transfer,Transfer own Account
+make fund transfer to another person,Transfer to 3rd party
+setup a payee,Add Payee
+help me to send money to payee,Transfer to 3rd party
+request Transfer to payee,Transfer to 3rd party
+I want to delete payee,Delete Payee
+what do I have left today,Account balance
+can you call me,Req to call back
+can I add payee,Add Payee
+I want funds to be transferred,Transfer own Account
+ajfoiej afjaeo afjaeo afoeial lf aa foea,Unknown
+transfer money to another person,Transfer to 3rd party
+display what do I have left today,Account balance
+can I transfer funds,Transfer own Account
+short statement,Account balance
+callback,Req to call back
+I want the bank to call me,Req to call back
+tell me my balance for all accounts,Account balance
+I want the bank to contact me,Req to call back
+display account overview,Account balance
+request to transfer funds,Transfer to 3rd party
+I need you to transfer me to an agent,Req for Human Agent
+new beneficiary,Add Payee
+I have to talk to someone now,Req for Human Agent
+help me to Remove payee,Delete Payee
+can you Call me back,Req to call back
+I want to move money between my accounts,Transfer own Account
+transfer funds,Transfer to 3rd party
+I need to send funds to another person,Transfer to 3rd party
+transfer funds to another person,Transfer to 3rd party
+help me to make a payment to [person],Transfer to 3rd party
+ajfoiej afjaeo afjaeo afoeial lf aa foea,Unknown
+ajfoiej balance afjaeo afoeial lf aa foea,Unknown
+can I transfer [number] from my [account_type] to my [account_type],Transfer own Account
+display what funds I have available,Account balance
+show me short statement,Account balance
+put me through talk to a human,Req for Human Agent
+I want to see what’s left in my account,Account balance
+what are my Account transactions,Transaction history
+I request to talk to a real person,Req for Human Agent
+Add a new payee,Add Payee
+I need to transfer funds to another person,Transfer to 3rd party
+I want to move funds between my accounts,Transfer own Account
+I need to make a bank transfer,Transfer to 3rd party
+I want to see my Last [number] transactions,Transaction history
+How much money do I have,Account balance
+ajfoiej transfer afjaeo afoeial lf aa foea,Unknown
+help me to Pay bill,Bill Payment
+help me to move from [account_type] to [account_type],Transfer own Account
+I need help now,Req for Human Agent
+show me account overview,Account balance
+ajfoiej add afjaeo afoeial lf aa foea,Unknown
+ajfoiej payee afjaeo afoeial lf aa foea,Unknown
+help me to transfer funds,Transfer to 3rd party
+I want to move some money,Transfer own Account
+request money transfer,Transfer own Account
+show me how much I can spend,Account balance
+get account balance,Account balance
+I want to find how much can I spend,Account balance
+what’s my account balance,Account balance
+please get Balance for account [account_type],Account balance
+can I transfer funds,Transfer to 3rd party
+get Balance,Account balance
+help me to create beneficiary,Add Payee
+help me to create a bank transfer,Transfer to 3rd party
+can I send funds,Transfer to 3rd party
+what is my transaction summary,Transaction history
+I want to transfer,Transfer own Account
+I want to find summary of accounts,Account balance
+account transactions,Transaction history
+I want to see account overview,Account balance
+I need someone to get in touch with me,Req to call back
+get in touch with me,Req to call back
+show me summary of balances,Account balance
+what were the recent transactions,Transaction history
+help me to move some money,Transfer own Account
+talk to a human,Req for Human Agent
+I want to make a bank transfer,Transfer to 3rd party
+transfer [number] from my [account_type] to [account_type],Transfer own Account
+I’d like to send money to payee,Transfer to 3rd party
+I want to move money,Transfer own Account
+ajfoiej afjaeo person afoeial lf aa foea,Unknown
+I need to create a bank transfer,Transfer to 3rd party
+get short statement,Account balance
+request to send money to payee,Transfer to 3rd party
+can you contact me,Req to call back
+help me to move money,Transfer own Account
+I want you to contact me,Req to call back
+what funds do I have available,Account balance
+I’d like to transfer from my [account_type] to my [account_type],Transfer own Account
+I want to pay [person],Transfer to 3rd party
+what’s my account balance,Account balance
+put me through to talk to a person,Req for Human Agent
+can I move money,Transfer own Account
+what is the money available,Account balance
+I’d like to transfer funds to another person,Transfer to 3rd party
+what is the History of account,Transaction history
+please get what’s left in my account,Account balance
+transfer money to payee,Transfer to 3rd party
+setup a new payee,Add Payee
+can I make a transfer,Transfer own Account
+call me,Req to call back
+create a new payee,Add Payee
+I want to pay someone new,Add Payee
+what do I have left today,Account balance
+assist me with transferring money to payee,Transfer to 3rd party
+can I make a bank transfer,Transfer to 3rd party
+can you contact me,Req to call back
+please get account overview,Account balance
+can I create a bank transfer,Transfer to 3rd party
+help me to pay someone else,Transfer to 3rd party
+ajfoiej afjaeo phone afoeial lf aa foea,Unknown
+set up a beneficiary,Add Payee
+please get account balance,Account balance
+tell me summary of accounts,Account balance
+can I Speak with an agent,Req for Human Agent
+transfer me to an agent,Req for Human Agent
+How much money do I have,Account balance
+pay [person],Transfer to 3rd party
+I request to talk to a person,Req for Human Agent
+I need to erase payee,Delete Payee
+I want to send funds to another person,Transfer to 3rd party
+I want to see my Transaction history,Transaction history
+afiea transaction afoila oaeoa oeoa account,Unknown
+I want to make a transfer,Transfer own Account
+I need to move money between my accounts,Transfer own Account
+what’s the money available,Account balance
+I want an agent to get in touch with me,Req to call back
+please get account balance,Account balance
+get account balance,Account balance
+what are my Last [number] transactions,Transaction history
+I have to transfer to an agent,Req for Human Agent
+make pay someone else,Transfer to 3rd party
+I need to pay a bill,Bill Payment
+I’d like to send funds to another person,Transfer to 3rd party
+make money transfer to another person,Transfer to 3rd party
+ask a bank clerk to phone me,Req to call back
+can you Call me back,Req to call back
+get How much money I have,Account balance
+account sum,Account balance
+can I delete payee,Delete Payee
+can I move some money,Transfer own Account
+what is my Transaction history,Transaction history
+what’s left in my account,Account balance
+I want to make a payment to [person],Transfer to 3rd party
+funds transfer,Transfer to 3rd party
+I want to see summary of accounts,Account balance
+ajfoiej call afjaeo afoeial lf aa foea,Unknown
+what’s my account overview,Account balance
+Remove Beneficiary,Delete Payee
+Transfer between my accounts,Transfer own Account
+can you pay a bill,Bill Payment
+ajfoiej afjaeo afjaeo balance lf aa foea,Unknown
+get summary of accounts,Account balance
+what do I have left today,Account balance
+can I move from [account_type] to [account_type],Transfer own Account
+ajfoiej afjaeo move money lf aa foea,Unknown
+I want to see Account summary,Account balance
+display balance for all accounts,Account balance
+what’s my Account summary,Account balance
+put me through talk to an agent,Req for Human Agent
+show me account summary,Account balance
+I need to transfer to another person,Transfer to 3rd party
+please get summary of accounts,Account balance
+what is my account summary,Account balance
+help me to move cash,Transfer own Account
+assist me with paying [person],Transfer to 3rd party
+request transfer to another person,Transfer to 3rd party
+account galjlal afleio a,Unknown
+Transfer to payee,Transfer to 3rd party
+request transfer funds to another person,Transfer to 3rd party
+please get short statement,Account balance
+I want to find balance for all accounts,Account balance
+can I get someone to contact me,Req to call back
+I need to Transfer to payee,Transfer to 3rd party
+please get what funds I have available,Account balance
+what’s my Balance,Account balance
+delete Beneficiary,Delete Payee
+I need to add new payee,Add Payee
+I want to find account sum,Account balance
+I request to talk to an agent,Req for Human Agent
+ajfoiej beneficiary afjaeo afoeial lf aa foea,Unknown
+assist me with sending money to [person],Transfer to 3rd party
+I’d like to move cash,Transfer own Account
+I’d like the funds transferred,Transfer own Account
+what’s my account balance,Account balance
+display Balance for account [account_number],Account balance
+I want to see my account Transactions,Transaction history
+ajfoiej afjaeo afjaeo afoeial lf aa foea,Unknown
+help me to move money between my accounts,Transfer own Account
+I want to talk to a real person,Req for Human Agent
+get account summary,Account balance
+ajfoiej afjaeo afjaeo balance lf aa foea,Unknown
+I’d like to move funds between my accounts,Transfer own Account
+How much money do I have,Account balance
+get balance for all accounts,Account balance
+move cash,Transfer own Account
+I want to Pay bill,Bill Payment
+erase payee,Delete Payee
+I need to send funds,Transfer to 3rd party
+I want to move cash,Transfer own Account
+display account balance,Account balance
+I want to transfer funds,Transfer own Account
+Call me back,Req to call back
+I need to transfer funds,Transfer to 3rd party
+can I transfer from my [account_type] to [account_type],Transfer own Account
+help me to create new payee,Add Payee
+I want to move from [account_type] to [account_type],Transfer own Account
+make a payment to [person],Transfer to 3rd party
+can I make a bill payment,Bill Payment
+I need to transfer money to payee,Transfer to 3rd party
+erase payee,Delete Payee
+show me How much money I have,Account balance
+can you help pay bill,Bill Payment
+I need a representative to contact me,Req to call back
+help me to make a transfer,Transfer to 3rd party
+I need to transfer [number] from my [account_type] to my [account_type],Transfer own Account
+I want to find summary of balances,Account balance
+can I create beneficiary,Add Payee
+how much can I spend,Account balance
+I want you to phone me,Req to call back
+can you give me a call,Req to call back
+put me through to talk to someone now,Req for Human Agent
+I want to transfer money to payee,Transfer to 3rd party
+help me to Remove Beneficiary,Delete Payee
+assist me with paying to a friend,Transfer to 3rd party
+what’s left in my account,Account balance
+what’s my Balance for account [account_number],Account balance
+get summary of balances,Account balance
+get what funds I have available,Account balance
+what is my summary of accounts,Account balance
+account summary,Account balance
+I have to talk to a human,Req for Human Agent
+create a beneficiary,Add Payee
+Speak with an agent,Req for Human Agent
+ajfoiej statement afjaeo afoeial lf aa foea,Unknown
+send funds,Transfer to 3rd party
+I’d like to do a money transfer,Transfer own Account
+I want to find what I have left today,Account balance
+tell me my account balance,Account balance
+what is my account balance,Account balance
+transfer to an agent,Req for Human Agent
+please get money available,Account balance
+can I pay someone else,Transfer to 3rd party
+pay someone new,Add Payee
+send money to payee,Transfer to 3rd party
+can I pay someone new,Add Payee
+please get balance for all accounts,Account balance
+help me to transfer money to another person,Transfer to 3rd party
+help me to transfer funds to payee,Transfer to 3rd party
+Account summary,Account balance
+I need to add payee,Add Payee
+help me to delete Beneficiary,Delete Payee
+I want to pay bill,Bill Payment
+I need to transfer funds to payee,Transfer to 3rd party
+what’s my account balance,Account balance
+I need to transfer from my [account_type] to my [account_type],Transfer own Account
+help me to make a bill payment,Bill Payment
+I need to Remove payee,Delete Payee
+ajfoiej afjaeo afjaeo transactions lf aa foea,Unknown
+request to transfer money to payee,Transfer to 3rd party
+tell me my account sum,Account balance
+please get account balance,Account balance
+can I talk to an agent,Req for Human Agent
+I have to Speak with an agent,Req for Human Agent
+I want to send money to payee,Transfer to 3rd party
+help me to transfer funds to another person,Transfer to 3rd party
+I need to delete payee,Delete Payee
+make Transfer to a payee,Transfer to 3rd party
+can I Transfer to payee [person],Transfer to 3rd party
+help me to pay a bill,Bill Payment
+What is my available balance,Account balance
+help me to transfer money to payee,Transfer to 3rd party
+I want to talk to an agent,Req for Human Agent
+erase Beneficiary,Delete Payee
+I want to find what funds I have available,Account balance
+I want to erase payee,Delete Payee
+what’s my Balance for account [account_type],Account balance
+get summary of balances,Account balance
+I want to someone to Call me back,Req to call back
+ajfoiej afjaeo phone afoeial lf aa foea,Unknown
+delete payee,Delete Payee
+display Account summary,Account balance
+I have to talk to a real person,Req for Human Agent
+how much can I spend,Account balance
+ask a bank clerk to get in touch with me,Req to call back
+tell me my account summary,Account balance
+help me to add new beneficiary,Add Payee
+can someone get in touch with me,Req to call back
+can you get in touch with me,Req to call back
+I want to pay [name],Bill Payment
+transfer money to payee,Transfer to 3rd party
+can I get a call,Req to call back
+display summary of balances,Account balance
+what were the Last [number] transactions,Transaction history
+account transactions,Transaction history
+I want to see what funds I have available,Account balance
+I request to Speak with an agent,Req for Human Agent
+what’s my account summary,Account balance
+setup a pay someone new,Add Payee
+help me to Transfer to payee,Transfer to 3rd party
+I want to Transfer to payee,Transfer to 3rd party
+display what’s left in my account,Account balance
+help me to erase Beneficiary,Delete Payee
+create a bank transfer,Transfer to 3rd party
+Transaction history,Transaction history
+can I move money between my accounts,Transfer own Account
+transfer funds to payee [person],Transfer to 3rd party
+what are my recent transactions,Transaction history
+assist me with sending funds to another person,Transfer to 3rd party
+request funds transfer,Transfer own Account
+can I be transferred to an agent,Req for Human Agent
+put me through to an agent,Req for Human Agent
+ajfoiej statement afjaeo afoeial lf aa foea,Unknown
+I want to see Balance,Account balance
+can I transfer funds to another person,Transfer to 3rd party
+help me to make a transfer,Transfer own Account
+ask a bank clerk to Call me back,Req to call back
+create new payee,Add Payee
+ajfoiej afjaeo person afoeial lf aa foea,Unknown
+please get account summary,Account balance
+please get How much money I have,Account balance
+ajfoiej summary afjaeo afoeial lf aa foea,Unknown
+ajfoiej beneficiary afjaeo afoeial lf aa foea,Unknown
+tell me what’s left in my account,Account balance
+Add a pay someone new,Add Payee
+show me balance for all accounts,Account balance
+please get how much can I spend,Account balance
+please get Account summary,Account balance
+I want to talk to a person,Req for Human Agent
+can I Remove Beneficiary,Delete Payee
+can you pay my [name] bill,Bill Payment
+get account overview,Account balance
+help me to transfer [amount] from my [account_type] to my [account_type],Transfer own Account
+Add afoaeijl as beneficiary,Add Payee
+can someone contact me,Req to call back
+show me Account summary,Account balance
+can I Remove payee,Delete Payee
+You have to transfer me to an agent,Req for Human Agent
+what’s left in my account,Account balance
+I want to pay a bill,Bill Payment
+what’s my balance for all accounts,Account balance
+I want to get account summary,Account balance
+ajfoiej afjaeo afjaeo afoeial lf aa foea,Unknown
+get account overview,Account balance
+what is my account balance,Account balance
+get what’s left in my account,Account balance
+I want to transfer funds to payee,Transfer to 3rd party
+setup a new beneficiary,Add Payee
+can I erase Beneficiary,Delete Payee
+can I get someone to phone me,Req to call back
+move money,Transfer own Account
+what is my Balance,Account balance
+can I add new payee,Add Payee
+please get money available,Account balance
+what is my balance for all accounts,Account balance
+set up a new beneficiary,Add Payee
+pay [person],Transfer to 3rd party
+help me to transfer from my [account_type] to my [account_type],Transfer own Account
+get balance for all accounts,Account balance
+I want to find account balance,Account balance
+Add a new beneficiary,Add Payee
+I want to see my why I have so little money,Transaction history
+I want to transfer [amount] from my [account_type] to my [account_type],Transfer own Account
+Add beneficiary,Add Payee
+delete payee,Delete Payee
+show me what I have left today,Account balance
+talk to a person,Req for Human Agent
+setup a new payee,Add Payee
+request funds transfer,Transfer to 3rd party
+can I be transferred to an agent,Req for Human Agent

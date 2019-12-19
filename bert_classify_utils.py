@@ -8,10 +8,12 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from tensorflow import keras
+
 from bert import modeling
 from bert import optimization
 from bert import run_classifier
-from bert import tokenization
+# from bert import tokenization
+import custom_tokenization
 
 
 def transform_labels(df, le=None):
@@ -59,8 +61,11 @@ def load_from_folder(path, le=None):
 
 
 def create_tokenizer(vocab_file, do_lower_case=True):
-    return tokenization.FullTokenizer(
-        vocab_file=vocab_file, do_lower_case=do_lower_case)
+    return custom_tokenization.FullTokenizer(
+        vocab_file=vocab_file, do_lower_case=do_lower_case,
+        restricted_vocab_file='bank_vocab.txt')
+    # return tokenization.FullTokenizer(
+    #     vocab_file=vocab_file, do_lower_case=do_lower_case)
 
 
 def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
