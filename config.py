@@ -45,7 +45,7 @@ PARAMS = {
 				"test_csv": os.path.join(PATH_TO_DATA, "bank", "test.csv"),
 			},
 			"init_checkpoint": "BERT_BASE_DIR/bert_model.ckpt",
-			"model_dir": os.path.join(PATH_TO_MODELS, "bank2"),
+			"model_dir": os.path.join(PATH_TO_MODELS, "bank"),
 			"train_batch_size": 16,
 			"learning_rate": 2e-5,
 			"num_train_epochs": 3.0,
@@ -54,7 +54,30 @@ PARAMS = {
 		},
 		"predict_params": {
 			"predict_batch_size": 10,
-			"model_checkpoint": os.path.join(PATH_TO_MODELS, "bank2", "model.ckpt-122"),
+			"model_checkpoint": os.path.join(PATH_TO_MODELS, "bank", "model.ckpt-122"),
+		},
+	},
+	"bank_gpu": {
+		"vocab_file": "BERT_BASE_DIR/vocab.txt",
+		"bert_config_file": "BERT_BASE_DIR/bert_config.json",
+		"max_seq_length": 16,
+		"label_encoder": os.path.join(PATH_TO_DATA, "bank", "label_encoder.pkl"),
+		"train_params": {
+			"data": {
+				"train_csv": os.path.join(PATH_TO_DATA, "bank", "formatted_train.csv"),
+				"test_csv": os.path.join(PATH_TO_DATA, "bank", "test.csv"),
+			},
+			"init_checkpoint": "BERT_BASE_DIR/bert_model.ckpt",
+			"model_dir": os.path.join(PATH_TO_MODELS, "bank_gpu"),
+			"train_batch_size": 1,
+			"learning_rate": 2e-5,
+			"num_train_epochs": 3.0,
+			"warmup_proportion": 0.1,
+			"save_checkpoints_steps": 50,
+		},
+		"predict_params": {
+			"predict_batch_size": 10,
+			"model_checkpoint": os.path.join(PATH_TO_MODELS, "bank_gpu", "model.ckpt-1956"),
 		},
 	},
 }

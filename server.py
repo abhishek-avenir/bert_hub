@@ -32,7 +32,6 @@ def predict():
 		text = content['text']
 		with graph.as_default():
 			with session.as_default():
-				print(text, "=====")
 				data['predictions'] = bc.predict(text=text)
 				data['success'] = True
 	return jsonify(data)
@@ -41,10 +40,14 @@ def predict():
 if __name__ == "__main__":
 	parser = ArgumentParser()
 	parser.add_argument("-p", "--project", required=True,
-						help="Enter the project name. Eg: `bank` or `imdb`")
+						help="Enter the project name. "
+							 "Eg: `bank` or `imdb` or `bank_gpu`")
+	parser.add_argument('--cpu', action='store_true', help="Use CPU over GPU")
 	args = parser.parse_args()
+	if args.cpu:
+		os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 	print(("* Loading BERT model and starting Flask Server..."
-           "please wait until server has fully started"))
+		   "please wait until server has fully started"))
 	load_model(project=args.project)
 	app.run(threaded=False)
 

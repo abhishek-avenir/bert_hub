@@ -1,5 +1,6 @@
 
 import numpy as np
+import os
 import tensorflow as tf
 import pickle
 
@@ -200,6 +201,7 @@ class BERTClassifier(object):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('-p', "--project", required=True)
+    parser.add_argument("--cpu", action='store_true', help='Use CPU over GPU')
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--train", action='store_true')
     group.add_argument("--predict", action='store_true')
@@ -209,6 +211,9 @@ if __name__ == "__main__":
     group2.add_argument("-t", "--text", help="Enter the text to classify")
     group2.add_argument("--skip-eval", action='store_true')
     args = parser.parse_args()
+
+    if args.cpu:
+        os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 
     if (args.skip_eval and args.predict) or (
             ((args.file or args.text) and args.train)):
